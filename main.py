@@ -3,9 +3,11 @@
 import os
 from jekyll import JekyllPost
 import mail
+import formatter
 
 if __name__ == "__main__":
-    mail_message = mail.read_mail()
+    # TODO don't post the same mail twice!
+    mail_message, attachments_dict = mail.read_mail()
 
     if not mail_message:
         print("No new emails found.")
@@ -13,7 +15,7 @@ if __name__ == "__main__":
 
     # Extract details from the email
     title = mail_message.subject or "Untitled"
-    content = mail_message.text
+    content = formatter.html_to_blog_md(mail_message.html, attachments_dict)
     author = mail_message.from_values.name
     date = mail_message.date
 

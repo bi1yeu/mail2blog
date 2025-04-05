@@ -26,4 +26,21 @@ def read_mail() -> Optional[MailMessage]:
 
     mail = mails[0]
 
-    return mail
+    attachment_map = _download_attachments(mail)
+
+    return mail, attachment_map
+
+
+def _download_attachments(mail: MailMessage) -> dict:
+    attd = {}
+
+    attachments_dir = "./attachments"
+    os.makedirs(attachments_dir, exist_ok=True)
+    for att in mail.attachments:
+        filename = f"{att.content_id}.{att.filename}"
+        with open(f"{attachments_dir}/{filename}", "wb") as f:
+            f.write(att.payload)
+
+        attd[att.content_id] = filename
+
+    return attd
