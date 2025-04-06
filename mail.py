@@ -21,10 +21,9 @@ def read_mail() -> (
 
     mailbox.folder.set(os.environ.get("M2B_MAILBOX_FOLDER", "Blog"))
 
-    # NOTE: this assumes the program is run at least as frequently as posts are
-    # emailed. e.g. if you run m2b on a cron every 5 minutes, but send two post
-    # emails in that time, only one of them would be published.
-    mails = list(mailbox.fetch(limit=10, reverse=True))
+    # NOTE: tune program invocation frequency against post limit
+    FETCH_POST_LIMIT = 10
+    mails = list(mailbox.fetch(limit=FETCH_POST_LIMIT, reverse=True))
 
     ret_mails = []
     for mail in mails:
