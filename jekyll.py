@@ -5,7 +5,7 @@ import re
 import datetime
 
 
-def slugify(title: str) -> str:
+def _slugify(title: str) -> str:
     """Generate a URL-friendly slug from the title."""
     slug = re.sub(r"[\W_]+", "-", title.lower()).strip("-")
     return slug
@@ -32,10 +32,10 @@ class JekyllPost:
         self.tags = tags if tags is not None else []
         self.content = content
 
-    def generate_filename(self):
+    def _generate_filename(self):
         """Generate a filename in the format YYYY-MM-DD-title.md."""
         date_str = self.date.strftime("%Y-%m-%d")
-        title_slug = slugify(self.title)
+        title_slug = _slugify(self.title)
         return f"{date_str}-{title_slug}.md"
 
     def _generate_front_matter(self):
@@ -60,7 +60,7 @@ class JekyllPost:
 
     def save(self, directory="."):
         """Save the post to the given directory."""
-        filename = self.generate_filename()
+        filename = self._generate_filename()
         # Expand the "~" to an absolute path.
         directory = os.path.expanduser(directory)
         filepath = os.path.join(directory, filename)

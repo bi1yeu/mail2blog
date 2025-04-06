@@ -1,3 +1,5 @@
 imap-tools
 markdownify
 pillow
+pytest
+dotenv

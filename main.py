@@ -43,7 +43,8 @@ class PostManager:
             json.dump(self.post_history, f, indent=4)
 
 
-if __name__ == "__main__":
+def main():
+    """Entry point for the mail2blog script."""
     logger.info("Starting mail2blog process")
     post_manager = PostManager()
     for mail_message, attachments_dict in mail.read_mail():
@@ -74,3 +75,7 @@ if __name__ == "__main__":
             logger.info(f"Successfully processed email: {title}")
         except Exception as e:
             logger.error(f"Error processing email: {str(e)}", exc_info=True)
+
+
+if __name__ == "__main__":
+    main()
