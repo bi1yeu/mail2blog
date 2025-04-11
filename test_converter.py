@@ -107,10 +107,45 @@ class TestHtmlToBlogMd(unittest.TestCase):
         mock_file.assert_called_once_with(
             os.path.join("assets", "123.document.pdf"), "wb"
         )
-        mock_convert.assert_called_once()
+        # PDF should NOT be converted
+        mock_convert.assert_not_called()
         self.assertEqual(
             result,
             "# Content\n\nWith attachment: [file]({{ site.baseurl }}/assets/123.document.pdf)",
+        )
+
+    @patch("converter.md")
+    @patch("converter.os.environ.get")
+    @patch("converter.open", new_callable=mock_open)
+    @patch("converter._convert_image_to_jpeg")
+    def test_html_to_blog_md_gif_attachment(
+        self, mock_convert, mock_file, mock_env_get, mock_md
+    ):
+        # Setup
+        mock_env_get.return_value = "assets"
+        mock_md.return_value = "# Content\n\nWith GIF: ![animation](cid:123)"
+
+        html = "<h1>Test HTML</h1>"
+
+        attachment = MagicMock(spec=MailAttachment)
+        attachment.content_type = "image/gif"
+        attachment.filename = "animation.gif"
+        attachment.payload = b"gif_data"
+
+        attachments_dict = {"123": attachment}
+
+        # Call the function
+        result = html_to_blog_md(html, attachments_dict)
+
+        # Assertions
+        mock_file.assert_called_once_with(
+            os.path.join("assets", "123.animation.gif"), "wb"
+        )
+        # GIF should NOT be converted
+        mock_convert.assert_not_called()
+        self.assertEqual(
+            result,
+            "# Content\n\nWith GIF: ![animation]({{ site.baseurl }}/assets/123.animation.gif)",
         )
 
     @patch("converter.md")
